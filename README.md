@@ -3,7 +3,8 @@
 App de desktop para makers de impressão 3D orçarem peças e exportarem o orçamento em PDF.
 Windows primeiro; Mac depois. Tudo fica no computador: sem conta, sem servidor, sem telemetria.
 
-> Status: **fase 2** (base do app, tema e componentes). Veja o [plano por fases](docs/arquitetura.md#fases).
+> Status: **fase 3 em andamento** (motor de custo pronto; leitura de arquivos e perfis de cálculo a seguir).
+> Veja o [plano por fases](docs/arquitetura.md#fases).
 
 ## Desenvolvimento
 
@@ -27,11 +28,25 @@ pnpm format:check && pnpm lint && pnpm typecheck && pnpm test
 
 ```
 apps/desktop/          interface React + Tailwind e o app Tauri (src-tauri/)
-packages/              motor de preço e leitores de arquivo (a partir da fase 3)
+packages/engine/       motor de custo e preço (TypeScript puro, testado)
 docs/                  arquitetura, decisões e documentos de apoio
 ```
 
-Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
+Detalhes em [docs/arquitetura.md](docs/arquitetura.md). Fórmulas do motor em
+[docs/motor-de-preco.md](docs/motor-de-preco.md).
+
+## Funções para quem vive de impressão 3D
+
+Escolhidas na etapa de propostas. Cada uma entra em um PR próprio: primeiro o cálculo, testado no
+motor; depois a migration e a tela, quando existir a base de orçamentos que ela usa.
+
+- **1. Fechamento do pedido (estimado × real):** planejada.
+
+- **2. Calibração pelo histórico:** planejada.
+
+- **4. Peças recorrentes com preço sempre atual:** planejada.
+
+- **6. Preço por quantidade a partir da mesa cheia:** planejada.
 
 ## Instalador sem assinatura
 

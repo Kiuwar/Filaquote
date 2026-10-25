@@ -56,8 +56,11 @@ clarão branco. Se a interface falhar, o Rust mostra a janela após 4 s.
 ## Fases
 
 1. Plano e perguntas ✔
-2. Base do app, tema e componentes ← atual
-3. Motor de preço com testes e perfis de cálculo salvos
+2. Base do app, tema e componentes ✔
+3. Motor de preço com testes e perfis de cálculo salvos ← atual (motor de custo pronto)
 4. Tela de orçamento e comparador de métodos
 5. PDF e histórico
 6. Backup, instalador e CI com Releases
+
+Funções escolhidas (1, 2, 4 e 6) entram junto da fase que dá base a cada uma: o cálculo já
+no motor; a migration e a tela quando existirem as tabelas de orçamento (fases 4 e 5).
