@@ -120,3 +120,23 @@ atípicas (pausa, troca de bico, teste) podem ser marcadas como excluídas.
   percentuais (configurável).
 - **Nunca aplica sozinho.** `applyCalibration` aplica só os campos que o usuário aceitou e devolve
   um perfil novo.
+
+## Função 4: peças recorrentes com preço sempre atual (`recurring.ts`)
+
+**Problema:** refazer do zero o orçamento da mesma peça, ou aprovar um orçamento antigo depois
+que o filamento ou a energia subiram.
+
+**Princípio:** a peça recorrente guarda as **entradas** (gramas, tempo, preparo, pós, extras),
+nunca o preço. Orçar de novo é recalcular com o perfil de hoje.
+
+**Comparação** (`compareWithSnapshot`): recebe o que foi gravado no orçamento anterior (perfil da
+época, entrada, preço e taxas) e o perfil de hoje. Devolve:
+
+- custo da época × custo de hoje, com a diferença em R$ e em %;
+- margem do preço cobrado com cada um: (preço − taxas − custo) ÷ preço;
+- **preço que devolve a margem da época**: (custo de hoje + taxas) ÷ (1 − margem da época);
+- os campos do perfil que mudaram, com antes, depois e variação (`profileChanges`);
+- `stale` (defasado) quando o custo mudou pelo menos 1% (configurável), para cima ou para baixo.
+
+O app nunca troca o preço sozinho: na aprovação, mostra os dois lados e o usuário decide se
+mantém o preço combinado.
