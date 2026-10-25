@@ -66,3 +66,33 @@ motor base, com preparo por mesa e pós-processamento e embalagem por cópia. Mo
 - **aviso** quando o preço de tabela já fica abaixo da margem mínima.
 
 O frete entra à parte no orçamento, não nas faixas.
+
+## Função 1: fechamento do pedido, estimado × real (`closure.ts`)
+
+**Problema:** o lucro é medido "no feeling". Reimpressão, pós-processamento mais longo e
+embalagem comem a margem sem aparecer.
+
+**Entrada** (`closeItem`): o valor cobrado, as taxas pagas, a entrada usada no orçamento e o
+que aconteceu de fato. Tudo opcional, exceto o que mudou:
+
+| Campo real                                | Se não informado                     |
+| ----------------------------------------- | ------------------------------------ |
+| Tempo de impressão (h)                    | tempo do fatiador × fator de tempo   |
+| Peso consumido, pesado (g)                | (gramas + purga) × (1 + desperdício) |
+| Preparo e pós-processamento (min)         | orçado (pós × fator de pós)          |
+| Extras                                    | os do orçamento                      |
+| Reimpressões (g e h perdidos em cada uma) | nenhuma                              |
+
+**Conta:** os mesmos preços do perfil, com as quantidades reais.
+
+- O peso pesado já inclui purga e desperdício, então não leva o percentual de desperdício.
+- A falha real é o custo de produção das tentativas perdidas, e não o percentual de reserva do
+  perfil: no fechamento, ou falhou ou não falhou.
+- Lucro = valor cobrado − taxas − custo. Margem real = lucro ÷ valor cobrado.
+- O resultado lista o desvio de cada parcela (real − orçado), da que mais pesou para a que
+  menos pesou, e as horas de máquina usadas, contando as reimpressões.
+
+**Resumo do mês** (`summarizeByMonth`): por data de fechamento (AAAA-MM-DD), soma o valor cobrado,
+o lucro orçado e o real, o desvio, o custo de reimpressões e as horas de máquina.
+
+Esses fechamentos também alimentam a calibração (função 2).

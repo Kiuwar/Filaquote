@@ -40,7 +40,9 @@ Detalhes em [docs/arquitetura.md](docs/arquitetura.md). Fórmulas do motor em
 Escolhidas na etapa de propostas. Cada uma entra em um PR próprio: primeiro o cálculo, testado no
 motor; depois a migration e a tela, quando existir a base de orçamentos que ela usa.
 
-- **1. Fechamento do pedido (estimado × real):** planejada.
+- **1. Fechamento do pedido (estimado × real):** cálculo pronto no motor
+  ([como funciona](docs/motor-de-preco.md#função-1-fechamento-do-pedido-estimado--real-closurets)).
+  A seguir: migration e tela de fechamento junto do histórico de orçamentos (fase 5).
 
 - **2. Calibração pelo histórico:** planejada.
 
