@@ -1,0 +1,29 @@
+[package]
+name = "filaquote"
+version = "0.1.0"
+description = "Orçamentos de impressão 3D"
+authors = ["Kiuwar"]
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+# Nome distinto do binário para evitar conflito no Windows (recomendação do Tauri).
+name = "filaquote_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+tauri = { version = "2.12.5", features = [] }
+tauri-plugin-sql = { version = "2.6.0", features = ["sqlite"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-version = "0.100.0"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
