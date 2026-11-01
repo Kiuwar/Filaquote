@@ -2,7 +2,10 @@ import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { useData } from "./data/DataProvider";
 import { AppearancePage } from "./features/appearance/AppearancePage";
+import { ClientsPage } from "./features/clients/ClientsPage";
+import { PartsPage } from "./features/parts/PartsPage";
 import { ComingSoon } from "./features/placeholder/ComingSoon";
+import { QuotePage } from "./features/quote/QuotePage";
 import { ProfilesPage } from "./features/profiles/ProfilesPage";
 import { findNavItem } from "./shell/navigation";
 import { RouterProvider, type Route } from "./shell/router";
@@ -20,13 +23,15 @@ function PageContent({ route }: { route: Route }) {
     case "perfis":
       return <ProfilesPage />;
     case "novo":
-      return (
-        <ComingSoon phase={4} items={["Orçamento com várias peças e comparador de métodos"]} />
-      );
+      return <QuotePage quoteId={route.quoteId} />;
+    case "pecas":
+      return <PartsPage />;
     case "orcamentos":
       return <ComingSoon phase={5} items={["Histórico, PDF e WhatsApp"]} />;
     case "clientes":
-      return <ComingSoon phase={4} items={["Cadastro local de clientes"]} />;
+      return <ClientsPage />;
+    case "padroes":
+      return <ComingSoon phase={5} items={["Numeração, validade, logo e WhatsApp"]} />;
     case "dados":
       return <ComingSoon phase={6} items={["Backup e privacidade"]} />;
   }
