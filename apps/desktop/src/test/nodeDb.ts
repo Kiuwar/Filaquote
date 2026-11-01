@@ -2,7 +2,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { toNumberedParams, type Db } from "../data/db";
+import { singleConnectionBatch, toNumberedParams, type Db } from "../data/db";
 
 export const MIGRATIONS_DIR = join(import.meta.dirname, "../../src-tauri/migrations");
 
@@ -42,6 +42,9 @@ export function createNodeDb(upToVersion = Infinity): {
       const r = raw.prepare(toNumberedParams(sql)).run(...(params as never[]));
       return { rowsAffected: Number(r.changes) };
     },
+    batch: singleConnectionBatch((sql, params) => {
+      raw.prepare(toNumberedParams(sql)).run(...(params as never[]));
+    }),
   };
   return { db, raw, migrate };
 }

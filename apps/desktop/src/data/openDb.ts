@@ -9,8 +9,10 @@ async function createTauriDb(): Promise<Db> {
   const db = await Database.load(DB_URL);
   // Chaves estrangeiras valem por conexão no SQLite.
   await db.execute("PRAGMA foreign_keys = ON");
+  const { invoke } = await import("@tauri-apps/api/core");
   return {
     select: (sql, params = []) => db.select(sql, params),
+    batch: (statements) => invoke("sql_batch", { db: DB_URL, statements }),
     async execute(sql, params = []) {
       const r = await db.execute(sql, params);
       return { rowsAffected: r.rowsAffected };

@@ -1,5 +1,5 @@
 import { sanitizeProfileData, type Profile, type ProfileData } from "../domain/profile";
-import { newId, transaction, type Db } from "./db";
+import { newId, type Db } from "./db";
 
 interface Row {
   id: string;
@@ -72,10 +72,10 @@ export async function duplicateProfile(db: Db, id: string): Promise<string | nul
 }
 
 export async function setDefaultProfile(db: Db, id: string): Promise<void> {
-  await transaction(db, async () => {
-    await db.execute("UPDATE profiles SET is_default = 0 WHERE is_default = 1");
-    await db.execute("UPDATE profiles SET is_default = 1 WHERE id = $1", [id]);
-  });
+  await db.batch([
+    { sql: "UPDATE profiles SET is_default = 0 WHERE is_default = 1" },
+    { sql: "UPDATE profiles SET is_default = 1 WHERE id = $1", params: [id] },
+  ]);
 }
 
 /** Exclui o perfil. Orçamentos já feitos guardam uma cópia dos parâmetros e não mudam. */
