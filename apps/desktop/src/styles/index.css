@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. As cores (--fq-*) são gravadas em tempo de execução por
+ * src/theme/theme.ts, então mudam na hora quando o usuário troca tema ou cor.
+ * Aqui ficam raios, sombras, tipografia e movimento.
+ */
+:root {
+  --fq-font-sans: "Inter Variable", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+
+  --fq-radius-window: 14px;
+  --fq-radius-card: 18px;
+  --fq-radius-control: 12px;
+  --fq-radius-pill: 999px;
+
+  --fq-frame-gap: 12px;
+  --fq-titlebar-h: 44px;
+
+  --fq-shadow-sm: 0 1px 2px rgb(16 16 28 / 0.06), 0 1px 1px rgb(16 16 28 / 0.04);
+  --fq-shadow-md: 0 6px 18px -6px rgb(16 16 28 / 0.14), 0 2px 6px -2px rgb(16 16 28 / 0.08);
+  --fq-shadow-lg: 0 18px 40px -12px rgb(16 16 28 / 0.22), 0 6px 14px -6px rgb(16 16 28 / 0.1);
+  --fq-shadow-window: 0 8px 24px rgb(0 0 0 / 0.22), 0 2px 6px rgb(0 0 0 / 0.14);
+
+  --fq-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fq-dur-fast: 120ms;
+  --fq-dur: 200ms;
+  --fq-dur-slow: 320ms;
+}
+
+:root[data-theme="dark"] {
+  --fq-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --fq-shadow-md: 0 8px 20px -8px rgb(0 0 0 / 0.6), 0 2px 6px -2px rgb(0 0 0 / 0.4);
+  --fq-shadow-lg: 0 20px 44px -14px rgb(0 0 0 / 0.7), 0 6px 14px -6px rgb(0 0 0 / 0.5);
+  --fq-shadow-window: 0 8px 24px rgb(0 0 0 / 0.55), 0 2px 6px rgb(0 0 0 / 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --fq-dur-fast: 0ms;
+    --fq-dur: 0ms;
+    --fq-dur-slow: 0ms;
+  }
+}
+
+/* Expõe os tokens como utilitários do Tailwind (bg-surface, text-muted, rounded-card…). */
+@theme inline {
+  --font-sans: var(--fq-font-sans);
+
+  --color-bg: var(--fq-bg);
+  --color-surface: var(--fq-surface);
+  --color-surface-2: var(--fq-surface-2);
+  --color-line: var(--fq-border);
+  --color-ink: var(--fq-text);
+  --color-muted: var(--fq-text-muted);
+  --color-primary: var(--fq-primary);
+  --color-primary-hover: var(--fq-primary-hover);
+  --color-primary-soft: var(--fq-primary-soft);
+  --color-on-primary: var(--fq-on-primary);
+  --color-accent: var(--fq-accent);
+  --color-accent-soft: var(--fq-accent-soft);
+  --color-on-accent: var(--fq-on-accent);
+  --color-danger: var(--fq-danger);
+  --color-success: var(--fq-success);
+  --color-warning: var(--fq-warning);
+
+  --radius-window: var(--fq-radius-window);
+  --radius-card: var(--fq-radius-card);
+  --radius-control: var(--fq-radius-control);
+
+  --shadow-soft: var(--fq-shadow-sm);
+  --shadow-raised: var(--fq-shadow-md);
+  --shadow-float: var(--fq-shadow-lg);
+
+  --ease-fq: var(--fq-ease);
+
+  --animate-fade-in: fq-fade-in var(--fq-dur-slow) var(--fq-ease) both;
+  --animate-pop-in: fq-pop-in var(--fq-dur) var(--fq-ease) both;
+}
+
+@keyframes fq-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fq-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--fq-font-sans);
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--fq-text);
+    background: var(--fq-bg);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11", "ss01";
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* Moldura desenhada pela interface (Windows 10): a janela é transparente. */
+  :root[data-frame="css"] body {
+    background: transparent;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"] {
+    user-select: text;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fq-primary);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--fq-primary-soft);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--fq-border);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* Seletor de cor (react-colorful) com os raios do app. */
+.fq-color-picker .react-colorful {
+  width: 100%;
+  height: 180px;
+}
+.fq-color-picker .react-colorful__saturation {
+  border-radius: var(--fq-radius-control) var(--fq-radius-control) 0 0;
+}
+.fq-color-picker .react-colorful__last-control {
+  border-radius: 0 0 var(--fq-radius-control) var(--fq-radius-control);
+}
+.fq-color-picker .react-colorful__pointer {
+  width: 20px;
+  height: 20px;
+}
