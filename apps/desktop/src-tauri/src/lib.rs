@@ -9,12 +9,20 @@ const DB_URL: &str = "sqlite:filaquote.db";
 
 /// Migrações em ordem. Nunca altere uma migração já publicada: crie a próxima.
 fn migrations() -> Vec<Migration> {
-    vec![Migration {
-        version: 1,
-        description: "settings",
-        sql: include_str!("../migrations/0001_settings.sql"),
-        kind: MigrationKind::Up,
-    }]
+    vec![
+        Migration {
+            version: 1,
+            description: "settings",
+            sql: include_str!("../migrations/0001_settings.sql"),
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "perfis",
+            sql: include_str!("../migrations/0002_perfis.sql"),
+            kind: MigrationKind::Up,
+        },
+    ]
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
