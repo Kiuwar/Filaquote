@@ -140,3 +140,39 @@ nunca o preço. Orçar de novo é recalcular com o perfil de hoje.
 
 O app nunca troca o preço sozinho: na aprovação, mostra os dois lados e o usuário decide se
 mantém o preço combinado.
+
+## Métodos de preço (`pricing.ts`)
+
+Tudo por unidade: custo do item ÷ quantidade. Método sem parâmetro preenchido aparece como
+"a confirmar", com a lista do que falta.
+
+| #   | Método                    | Conta                                                    |
+| --- | ------------------------- | -------------------------------------------------------- |
+| 1   | Custo + markup            | custo × (1 + markup)                                     |
+| 2   | Margem sobre o preço      | custo ÷ (1 − margem)                                     |
+| 3   | Meta por hora de máquina  | horas × R$/h + extras                                    |
+| 4   | Preço por grama           | gramas × R$/g + extras                                   |
+| 5   | Preço-alvo (reverso)      | você digita o preço; o app mostra lucro, margem e markup |
+| 6   | Marketplace               | (custo + taxa fixa + frete) ÷ (1 − taxa % − margem %)    |
+| 7   | Escalonado por quantidade | recomendado × (1 − desconto da faixa atingida)           |
+
+**Faixas:** _mínimo_ = custo ÷ (1 − margem mínima); _recomendado_ = método escolhido no perfil;
+_premium_ = recomendado × (1 + acréscimo). Depois de cada conta: sobe para o **preço mínimo**,
+se houver, e aplica o **arredondamento** (nunca para baixo): R$ 0,10, R$ 0,50, real inteiro ou
+final ,90.
+
+## Leitura de arquivos
+
+**STL** (`stl.ts`): binário e ASCII. Volume = soma dos volumes sinalizados dos tetraedros
+(triângulo + origem), exato para malha fechada. Avisa malha aberta (arestas sem par), normais
+invertidas e tamanho implausível; como o STL não guarda unidade, sugere cm, polegadas ou metros
+quando a peça fica pequena ou grande demais. Estimativa: gramas = volume (cm³) × densidade ×
+[maciço + (1 − maciço) × preenchimento]; horas = gramas ÷ vazão (g/h). Densidade, fração
+maciça e vazão vêm do perfil.
+
+**3MF fatiado do Bambu Studio** (`bambu3mf.ts`, **experimental**): lê
+`Metadata/slice_info.config` dentro do arquivo `.gcode.3mf` (tempo previsto e peso de cada mesa,
+e gramas por filamento). A estrutura foi conferida em dois leitores de código aberto
+independentes, mas ainda não em arquivos do usuário: o app mostra os valores lidos para conferir
+antes de usar. G-code puro não é lido nesta versão (o formato dos comentários varia e não foi
+validado com arquivos reais).
