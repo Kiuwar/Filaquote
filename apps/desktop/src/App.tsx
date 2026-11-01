@@ -6,8 +6,8 @@ import { ClientsPage } from "./features/clients/ClientsPage";
 import { DefaultsPage } from "./features/defaults/DefaultsPage";
 import { HistoryPage } from "./features/history/HistoryPage";
 import { PartsPage } from "./features/parts/PartsPage";
-import { ComingSoon } from "./features/placeholder/ComingSoon";
 import { QuotePage } from "./features/quote/QuotePage";
+import { DataPage } from "./features/privacy/DataPage";
 import { ProfilesPage } from "./features/profiles/ProfilesPage";
 import { findNavItem } from "./shell/navigation";
 import { RouterProvider, type Route } from "./shell/router";
@@ -35,7 +35,7 @@ function PageContent({ route }: { route: Route }) {
     case "padroes":
       return <DefaultsPage />;
     case "dados":
-      return <ComingSoon phase={6} items={["Backup e privacidade"]} />;
+      return <DataPage />;
   }
 }
 
