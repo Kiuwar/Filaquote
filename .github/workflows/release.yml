@@ -1,10 +1,16 @@
 name: Release
 
-# Publica o instalador do Windows no GitHub Releases quando uma tag vX.Y.Z é enviada.
+# Publica o instalador do Windows no GitHub Releases. Dispara ao enviar uma tag vX.Y.Z,
+# ou manualmente (Actions → Release → Run workflow) informando a versão; nesse caso a
+# própria publicação cria a tag no commit escolhido.
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Versão a publicar (ex.: v0.1.0). Deve bater com a versão do app."
+        required: true
 
 permissions:
   contents: write
@@ -24,6 +30,12 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri -> target
+      - name: Versão informada bate com a do app
+        if: inputs.version != ''
+        shell: bash
+        run: |
+          app="v$(node -p "require('./apps/desktop/src-tauri/tauri.conf.json').version")"
+          [ "$app" = "${{ inputs.version }}" ] || { echo "Versão do app é $app, não ${{ inputs.version }}"; exit 1; }
       - run: pnpm install --frozen-lockfile
       - name: Testes antes de publicar
         run: pnpm test
@@ -33,8 +45,8 @@ jobs:
         with:
           projectPath: apps/desktop
           tauriScript: pnpm tauri
-          tagName: ${{ github.ref_name }}
-          releaseName: Filaquote ${{ github.ref_name }}
+          tagName: ${{ inputs.version || github.ref_name }}
+          releaseName: Filaquote ${{ inputs.version || github.ref_name }}
           releaseBody: |
             Instalador para Windows 10 e 11: baixe o arquivo `Filaquote_*_x64-setup.exe` abaixo.
 
