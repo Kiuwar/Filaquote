@@ -83,7 +83,8 @@ cd apps/desktop/src-tauri && cargo clippy --all-targets -- -D warnings && cargo 
 
 Publicar uma versão: atualize a versão em `apps/desktop/package.json`,
 `apps/desktop/src-tauri/tauri.conf.json` e `apps/desktop/src-tauri/Cargo.toml`, registre no
-`CHANGELOG.md` e envie uma tag `vX.Y.Z`. O workflow `release.yml` publica o instalador.
+`CHANGELOG.md` e envie uma tag `vX.Y.Z` (ou rode o workflow **Release** em Actions informando a
+versão). O workflow `release.yml` publica o instalador.
 
 ## Estrutura
 
