@@ -1,113 +1,87 @@
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
+import { useData } from "./data/DataProvider";
 import { AppearancePage } from "./features/appearance/AppearancePage";
 import { ComingSoon } from "./features/placeholder/ComingSoon";
-import { findNavItem, type PageId } from "./shell/navigation";
+import { ProfilesPage } from "./features/profiles/ProfilesPage";
+import { findNavItem } from "./shell/navigation";
+import { RouterProvider, type Route } from "./shell/router";
 import { Sidebar } from "./shell/Sidebar";
 import { TitleBar } from "./shell/TitleBar";
 import { WindowFrame } from "./shell/WindowFrame";
 import { cn } from "./ui/cn";
+import { ConfirmProvider } from "./ui/Modal";
+import { ToastProvider } from "./ui/Toast";
 
-function PageContent({ page }: { page: PageId }) {
-  switch (page) {
+function PageContent({ route }: { route: Route }) {
+  switch (route.page) {
     case "aparencia":
       return <AppearancePage />;
+    case "perfis":
+      return <ProfilesPage />;
     case "novo":
       return (
-        <ComingSoon
-          phase={4}
-          items={[
-            "Várias peças por orçamento, com quantidade e acabamento",
-            "Entrada por STL, G-code/3MF do Bambu Studio ou digitação manual",
-            "Comparador lado a lado dos 7 métodos de preço",
-          ]}
-        />
+        <ComingSoon phase={4} items={["Orçamento com várias peças e comparador de métodos"]} />
       );
     case "orcamentos":
-      return (
-        <ComingSoon
-          phase={5}
-          items={[
-            "Histórico com status (rascunho, enviado, aprovado, recusado)",
-            "Busca e duplicar",
-            "PDF e mensagem pronta para WhatsApp",
-          ]}
-        />
-      );
+      return <ComingSoon phase={5} items={["Histórico, PDF e WhatsApp"]} />;
     case "clientes":
-      return (
-        <ComingSoon
-          phase={5}
-          items={["Cadastro local de clientes", "Excluir os dados de um cliente"]}
-        />
-      );
-    case "perfis":
-      return (
-        <ComingSoon
-          phase={3}
-          items={[
-            "Criar, nomear e salvar várias formas de calcular",
-            "Impressora, material, energia, mão de obra, extras e taxa de falha",
-            "Ficam salvas no computador e voltam ao abrir o app",
-          ]}
-        />
-      );
+      return <ComingSoon phase={4} items={["Cadastro local de clientes"]} />;
     case "dados":
-      return (
-        <ComingSoon
-          phase={6}
-          items={[
-            "Exportar e importar backup",
-            "Minuta de aviso de privacidade (revisar com advogado)",
-          ]}
-        />
-      );
+      return <ComingSoon phase={6} items={["Backup e privacidade"]} />;
   }
 }
 
 export function App({ storageError }: { storageError?: string }) {
-  const [page, setPage] = useState<PageId>("aparencia");
+  const { db } = useData();
+  const [route, setRoute] = useState<Route>({ page: db ? "novo" : "aparencia" });
   // Anima só a troca de página; o primeiro desenho acontece com a janela ainda oculta.
   const [navigated, setNavigated] = useState(false);
-  const nav = findNavItem(page);
-  const goTo = (id: PageId) => {
+  const nav = findNavItem(route.page);
+  const navigate = (next: Route) => {
     setNavigated(true);
-    setPage(id);
+    setRoute(next);
   };
 
   return (
-    <WindowFrame>
-      <TitleBar subtitle={nav.label} />
-      <div className="flex min-h-0 flex-1">
-        <Sidebar current={page} onSelect={goTo} />
-        <main className="min-w-0 flex-1 overflow-y-auto">
-          <div
-            key={page}
-            className={cn(
-              "mx-auto flex max-w-4xl flex-col gap-5 p-8",
-              navigated && "animate-fade-in",
-            )}
-          >
-            <header>
-              <h1 className="text-2xl font-semibold tracking-tight">{nav.label}</h1>
-              <p className="mt-1 text-sm text-muted">{nav.description}</p>
-            </header>
-            {storageError && (
-              <div
-                role="alert"
-                className="flex items-start gap-2 rounded-control border border-warning/40 bg-warning/10 p-3 text-sm"
-              >
-                <AlertTriangle size={16} className="mt-0.5 shrink-0 text-warning" />
-                <span>
-                  Não foi possível abrir o banco de dados local. As preferências desta sessão não
-                  serão salvas. Detalhe: {storageError}
-                </span>
-              </div>
-            )}
-            <PageContent page={page} />
-          </div>
-        </main>
-      </div>
-    </WindowFrame>
+    <ToastProvider>
+      <ConfirmProvider>
+        <RouterProvider navigate={navigate}>
+          <WindowFrame>
+            <TitleBar subtitle={nav.label} />
+            <div className="flex min-h-0 flex-1">
+              <Sidebar current={route.page} onSelect={(page) => navigate({ page })} />
+              <main className="min-w-0 flex-1 overflow-y-auto">
+                <div
+                  key={`${route.page}:${route.quoteId ?? ""}`}
+                  className={cn(
+                    "mx-auto flex max-w-5xl flex-col gap-5 p-8",
+                    navigated && "animate-fade-in",
+                  )}
+                >
+                  <header>
+                    <h1 className="text-2xl font-semibold tracking-tight">{nav.label}</h1>
+                    <p className="mt-1 text-sm text-muted">{nav.description}</p>
+                  </header>
+                  {storageError && (
+                    <div
+                      role="alert"
+                      className="flex items-start gap-2 rounded-control border border-warning/40 bg-warning/10 p-3 text-sm"
+                    >
+                      <AlertTriangle size={16} className="mt-0.5 shrink-0 text-warning" />
+                      <span>
+                        Não foi possível abrir o banco de dados local, então só a aparência funciona
+                        nesta sessão. Detalhe: {storageError}
+                      </span>
+                    </div>
+                  )}
+                  {db || route.page === "aparencia" ? <PageContent route={route} /> : null}
+                </div>
+              </main>
+            </div>
+          </WindowFrame>
+        </RouterProvider>
+      </ConfirmProvider>
+    </ToastProvider>
   );
 }
