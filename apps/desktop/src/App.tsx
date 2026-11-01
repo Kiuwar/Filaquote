@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useData } from "./data/DataProvider";
 import { AppearancePage } from "./features/appearance/AppearancePage";
 import { ClientsPage } from "./features/clients/ClientsPage";
+import { DefaultsPage } from "./features/defaults/DefaultsPage";
+import { HistoryPage } from "./features/history/HistoryPage";
 import { PartsPage } from "./features/parts/PartsPage";
 import { ComingSoon } from "./features/placeholder/ComingSoon";
 import { QuotePage } from "./features/quote/QuotePage";
@@ -27,11 +29,11 @@ function PageContent({ route }: { route: Route }) {
     case "pecas":
       return <PartsPage />;
     case "orcamentos":
-      return <ComingSoon phase={5} items={["Histórico, PDF e WhatsApp"]} />;
+      return <HistoryPage />;
     case "clientes":
       return <ClientsPage />;
     case "padroes":
-      return <ComingSoon phase={5} items={["Numeração, validade, logo e WhatsApp"]} />;
+      return <DefaultsPage />;
     case "dados":
       return <ComingSoon phase={6} items={["Backup e privacidade"]} />;
   }

@@ -2,8 +2,13 @@ const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" 
 const pct = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 const dec = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
 
-export const money = (n: number | null | undefined) => (n == null ? "—" : brl.format(n));
-export const percent = (n: number | null | undefined) => (n == null ? "—" : `${pct.format(n)}%`);
+/** Valores que arredondam para zero viram zero (evita "-R$ 0,00" e "-0%"). */
+const clean = (n: number, step: number) => (Math.abs(n) < step / 2 ? 0 : n);
+
+export const money = (n: number | null | undefined) =>
+  n == null ? "—" : brl.format(clean(n, 0.01));
+export const percent = (n: number | null | undefined) =>
+  n == null ? "—" : `${pct.format(clean(n, 0.1))}%`;
 export const decimal = (n: number | null | undefined) => (n == null ? "—" : dec.format(n));
 
 export function duration(hours: number | null | undefined): string {
