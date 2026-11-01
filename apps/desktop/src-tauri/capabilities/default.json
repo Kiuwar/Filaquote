@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Permissões da janela principal: só o necessário para a moldura própria e o banco local.",
+  "description": "Permissões da janela principal: controles da janela própria, banco local e a janela de \"Salvar como\".",
   "windows": ["main"],
   "permissions": [
     "core:default",
@@ -14,6 +14,7 @@
     "core:window:allow-start-resize-dragging",
     "core:window:allow-is-maximized",
     "sql:default",
-    "sql:allow-execute"
+    "sql:allow-execute",
+    "dialog:allow-save"
   ]
 }
