@@ -22,6 +22,7 @@ import { EmptyState } from "../../ui/EmptyState";
 import { Field, Input } from "../../ui/Field";
 import { useConfirm } from "../../ui/Modal";
 import { errorMessage, useToast } from "../../ui/Toast";
+import { CalibrationPanel } from "./CalibrationPanel";
 import { ProfileEditor } from "./ProfileEditor";
 
 function Editor({ profile, onSaved }: { profile: Profile; onSaved(): void }) {
@@ -89,6 +90,7 @@ function Editor({ profile, onSaved }: { profile: Profile; onSaved(): void }) {
           <Trash2 size={16} />
         </Button>
       </div>
+      <CalibrationPanel profileId={profile.id} data={data} onApply={setData} />
       <ProfileEditor data={data} onChange={setData} />
     </div>
   );
