@@ -48,7 +48,9 @@ motor; depois a migration e a tela, quando existir a base de orçamentos que ela
   ([como funciona](docs/motor-de-preco.md#função-2-calibração-pelo-histórico-calibrationts)).
   A seguir: tela de sugestões no perfil de cálculo, depois do fechamento (fase 5).
 
-- **4. Peças recorrentes com preço sempre atual:** planejada.
+- **4. Peças recorrentes com preço sempre atual:** cálculo pronto no motor
+  ([como funciona](docs/motor-de-preco.md#função-4-peças-recorrentes-com-preço-sempre-atual-recurringts)).
+  A seguir: migration da tabela de peças e aviso na aprovação, junto da tela de orçamento (fase 4).
 
 - **6. Preço por quantidade a partir da mesa cheia:** cálculo pronto no motor
   ([como funciona](docs/motor-de-preco.md#função-6-preço-por-quantidade-a-partir-da-mesa-cheia-platets)).
