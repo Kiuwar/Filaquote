@@ -1,5 +1,7 @@
 import {
+  FileCog,
   FilePlus2,
+  Repeat,
   FileText,
   Palette,
   ShieldCheck,
@@ -8,7 +10,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-export type PageId = "novo" | "orcamentos" | "clientes" | "perfis" | "aparencia" | "dados";
+export type PageId =
+  "novo" | "orcamentos" | "clientes" | "pecas" | "perfis" | "padroes" | "aparencia" | "dados";
 
 export interface NavItem {
   id: PageId;
@@ -41,11 +44,26 @@ export const NAV_ITEMS: readonly NavItem[] = [
     group: "main",
   },
   {
+    id: "pecas",
+    label: "Peças recorrentes",
+    description:
+      "Peças que você orça sempre. Guardam a entrada, e o preço é recalculado com os custos de hoje.",
+    icon: Repeat,
+    group: "main",
+  },
+  {
     id: "perfis",
     label: "Perfis de cálculo",
     description: "Formas de calcular salvas: impressora, material, tarifas e método de preço.",
     icon: SlidersHorizontal,
     group: "main",
+  },
+  {
+    id: "padroes",
+    label: "Orçamento e PDF",
+    description: "Numeração, validade, condições, logo e mensagem de WhatsApp.",
+    icon: FileCog,
+    group: "settings",
   },
   {
     id: "aparencia",
