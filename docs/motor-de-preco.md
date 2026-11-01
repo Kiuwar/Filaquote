@@ -37,3 +37,32 @@ Para um custo de R$ 60 e um preço de R$ 100:
 
 Com markup de 40%, o preço seria R$ 84 e a margem, só 28,6%. Para ter margem de 40%, o preço é
 custo ÷ (1 − 0,40) = R$ 100 (`priceForMargin`).
+
+## Função 6: preço por quantidade a partir da mesa cheia (`plate.ts`)
+
+**Problema:** desconto por quantidade costuma ser chutado. Numa mesa cheia, parte do gasto é por
+mesa (aquecimento, calibração, linha de purga e, em multicolor, purgas de troca de cor, que
+acontecem por camada e não por peça) e parte é por cópia.
+
+**Entrada:** a mesma peça fatiada duas vezes com números diferentes de cópias (por exemplo, 1 e 8),
+com tempo, filamento e purga de cada mesa. Hoje esses dados são digitados; a importação do 3MF do
+Bambu Studio vem com a leitura de arquivos da fase 3.
+
+**Conta** (`fitPlateModel`), para tempo, filamento e purga:
+
+- por cópia = (valor da mesa maior − valor da mesa menor) ÷ (diferença de cópias)
+- por mesa = valor da mesa menor − cópias × por cópia
+- para Q unidades com até N por mesa: mesas = ⌈Q ÷ N⌉ e total = mesas × por mesa + Q × por cópia
+
+Se os dados fogem do modelo, o motor usa a hipótese que não subestima o custo e avisa:
+fixo negativo vira "sem desconto por mesa" e unitário negativo vira "tudo por mesa".
+
+**Faixas** (`quantityTiers`): para cada quantidade (padrão 1, N, 2N e 4N), o custo completo do
+motor base, com preparo por mesa e pós-processamento e embalagem por cópia. Mostra:
+
+- **custo unitário**;
+- **preço sugerido:** mantém a margem do preço de tabela, ou seja, repassa a economia;
+- **desconto máximo:** até onde dá para descontar sem ficar abaixo da margem mínima;
+- **aviso** quando o preço de tabela já fica abaixo da margem mínima.
+
+O frete entra à parte no orçamento, não nas faixas.

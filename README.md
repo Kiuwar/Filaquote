@@ -46,7 +46,9 @@ motor; depois a migration e a tela, quando existir a base de orçamentos que ela
 
 - **4. Peças recorrentes com preço sempre atual:** planejada.
 
-- **6. Preço por quantidade a partir da mesa cheia:** planejada.
+- **6. Preço por quantidade a partir da mesa cheia:** cálculo pronto no motor
+  ([como funciona](docs/motor-de-preco.md#função-6-preço-por-quantidade-a-partir-da-mesa-cheia-platets)).
+  A seguir: importar as duas mesas do 3MF do Bambu Studio e mostrar as faixas na tela de orçamento.
 
 ## Instalador sem assinatura
 
