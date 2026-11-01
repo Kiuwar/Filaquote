@@ -1,5 +1,5 @@
 import type { Client } from "../domain/quote";
-import { newId, transaction, type Db } from "./db";
+import { newId, type Db } from "./db";
 
 interface Row {
   id: string;
@@ -77,9 +77,10 @@ export async function countClientQuotes(db: Db, id: string): Promise<number> {
  * `deleteQuotes`, os orçamentos dele também são apagados.
  */
 export async function deleteClient(db: Db, id: string, deleteQuotes: boolean): Promise<void> {
-  await transaction(db, async () => {
-    if (deleteQuotes) await db.execute("DELETE FROM quotes WHERE client_id = $1", [id]);
-    else await db.execute("UPDATE quotes SET client_id = NULL WHERE client_id = $1", [id]);
-    await db.execute("DELETE FROM clients WHERE id = $1", [id]);
-  });
+  await db.batch([
+    deleteQuotes
+      ? { sql: "DELETE FROM quotes WHERE client_id = $1", params: [id] }
+      : { sql: "UPDATE quotes SET client_id = NULL WHERE client_id = $1", params: [id] },
+    { sql: "DELETE FROM clients WHERE id = $1", params: [id] },
+  ]);
 }

@@ -8,7 +8,7 @@ import {
   type QuoteItem,
   type QuoteStatus,
 } from "../domain/quote";
-import { newId, transaction, type Db } from "./db";
+import { newId, type Db } from "./db";
 import { parseJson } from "./json";
 
 interface QuoteRow {
@@ -175,11 +175,17 @@ export function newItem(
 
 /** Grava o orçamento e substitui os itens pelos informados. */
 export async function saveQuote(db: Db, quote: Quote, items: readonly QuoteItem[]): Promise<void> {
-  await transaction(db, async () => {
-    await db.execute(
-      `UPDATE quotes SET client_id = $2, valid_until = $3, payment_terms = $4, lead_time = $5, notes = $6,
-         show_breakdown = $7, updated_at = datetime('now') WHERE id = $1`,
-      [
+  // Atualiza no lugar (não apaga e recria): o fechamento de um item fica ligado ao id dele.
+  const keep = new Set(items.map((i) => i.id));
+  const existing = await db.select<{ id: string }>(
+    "SELECT id FROM quote_items WHERE quote_id = $1",
+    [quote.id],
+  );
+  await db.batch([
+    {
+      sql: `UPDATE quotes SET client_id = $2, valid_until = $3, payment_terms = $4, lead_time = $5, notes = $6,
+              show_breakdown = $7, updated_at = datetime('now') WHERE id = $1`,
+      params: [
         quote.id,
         quote.clientId,
         quote.validUntil,
@@ -188,19 +194,12 @@ export async function saveQuote(db: Db, quote: Quote, items: readonly QuoteItem[
         quote.notes,
         quote.showBreakdown ? 1 : 0,
       ],
-    );
-    // Atualiza no lugar (não apaga e recria): o fechamento de um item fica ligado ao id dele.
-    const keep = items.map((i) => i.id);
-    const existing = await db.select<{ id: string }>(
-      "SELECT id FROM quote_items WHERE quote_id = $1",
-      [quote.id],
-    );
-    for (const { id } of existing) {
-      if (!keep.includes(id)) await db.execute("DELETE FROM quote_items WHERE id = $1", [id]);
-    }
-    for (const [position, item] of items.entries()) {
-      await db.execute(
-        `INSERT INTO quote_items (id, quote_id, position, name, quantity, finish, profile_id, profile_snapshot,
+    },
+    ...existing
+      .filter(({ id }) => !keep.has(id))
+      .map(({ id }) => ({ sql: "DELETE FROM quote_items WHERE id = $1", params: [id] })),
+    ...items.map((item, position) => ({
+      sql: `INSERT INTO quote_items (id, quote_id, position, name, quantity, finish, profile_id, profile_snapshot,
            input, source, plate, method, target_price, unit_price, unit_cost, part_id)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
          ON CONFLICT(id) DO UPDATE SET position = excluded.position, name = excluded.name,
@@ -209,27 +208,26 @@ export async function saveQuote(db: Db, quote: Quote, items: readonly QuoteItem[
            plate = excluded.plate, method = excluded.method, target_price = excluded.target_price,
            unit_price = excluded.unit_price, unit_cost = excluded.unit_cost, part_id = excluded.part_id,
            updated_at = datetime('now')`,
-        [
-          item.id,
-          quote.id,
-          position,
-          item.name.trim() || `Peça ${position + 1}`,
-          item.quantity,
-          item.finish,
-          item.profileId,
-          JSON.stringify(item.snapshot),
-          JSON.stringify(item.input),
-          item.source,
-          item.plate ? JSON.stringify(item.plate) : null,
-          item.method,
-          item.targetPrice,
-          item.unitPrice,
-          item.unitCost,
-          item.partId,
-        ],
-      );
-    }
-  });
+      params: [
+        item.id,
+        quote.id,
+        position,
+        item.name.trim() || `Peça ${position + 1}`,
+        item.quantity,
+        item.finish,
+        item.profileId,
+        JSON.stringify(item.snapshot),
+        JSON.stringify(item.input),
+        item.source,
+        item.plate ? JSON.stringify(item.plate) : null,
+        item.method,
+        item.targetPrice,
+        item.unitPrice,
+        item.unitCost,
+        item.partId,
+      ],
+    })),
+  ]);
 }
 
 export async function deleteQuote(db: Db, id: string): Promise<void> {

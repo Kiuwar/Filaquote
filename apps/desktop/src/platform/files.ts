@@ -7,7 +7,7 @@ import { isTauri } from "./tauri";
 export async function saveFile(
   defaultName: string,
   bytes: Uint8Array,
-  filter: { name: string; extension: "pdf" | "json" },
+  filter: { name: string; extension: "pdf" | "json" | "txt" },
 ): Promise<string | null> {
   if (!isTauri()) {
     const url = URL.createObjectURL(new Blob([bytes as Uint8Array<ArrayBuffer>]));

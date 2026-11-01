@@ -31,8 +31,8 @@ jobs:
       - run: pnpm test
 
   windows:
-    # Gera o instalador NSIS (sem assinatura) como artefato do workflow, para testar
-    # no Windows. A publicação em Releases entra na fase 6.
+    # Gera o instalador NSIS (sem assinatura) como artefato do workflow, para testar no
+    # Windows. A publicação em Releases é feita pelo release.yml, ao enviar uma tag vX.Y.Z.
     name: Rust e instalador Windows
     runs-on: windows-latest
     needs: web
@@ -58,6 +58,9 @@ jobs:
       - name: cargo clippy
         working-directory: apps/desktop/src-tauri
         run: cargo clippy --all-targets -- -D warnings
+      - name: cargo test
+        working-directory: apps/desktop/src-tauri
+        run: cargo test
       - name: Instalador
         run: pnpm tauri build
       - uses: actions/upload-artifact@v7

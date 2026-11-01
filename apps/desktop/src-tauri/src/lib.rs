@@ -1,4 +1,5 @@
 mod files;
+mod sql_batch;
 mod window;
 
 use tauri_plugin_sql::{Migration, MigrationKind};
@@ -48,7 +49,10 @@ fn migrations() -> Vec<Migration> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![files::save_file])
+        .invoke_handler(tauri::generate_handler![
+            files::save_file,
+            sql_batch::sql_batch
+        ])
         .plugin(
             tauri_plugin_sql::Builder::default()
                 .add_migrations(DB_URL, migrations())

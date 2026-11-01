@@ -2,7 +2,7 @@
 // Não entra no build de produção: é importado atrás de `import.meta.env.DEV`.
 import initSqlJs from "sql.js";
 import wasmUrl from "sql.js/dist/sql-wasm.wasm?url";
-import { toNumberedParams, type Db } from "./db";
+import { singleConnectionBatch, toNumberedParams, type Db } from "./db";
 import { MIGRATIONS } from "./migrations";
 
 export async function createDevDb(): Promise<Db> {
@@ -23,5 +23,8 @@ export async function createDevDb(): Promise<Db> {
       db.run(toNumberedParams(sql), params as initSqlJs.BindParams);
       return { rowsAffected: db.getRowsModified() };
     },
+    batch: singleConnectionBatch((sql, params) =>
+      db.run(toNumberedParams(sql), params as initSqlJs.BindParams),
+    ),
   };
 }

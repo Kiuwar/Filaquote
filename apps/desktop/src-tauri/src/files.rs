@@ -1,7 +1,7 @@
 use std::path::Path;
 
-/// Extensões que o app grava: PDF do orçamento e backup em JSON.
-const ALLOWED: [&str; 2] = ["pdf", "json"];
+/// Extensões que o app grava: PDF do orçamento, backup em JSON e a minuta em texto.
+const ALLOWED: [&str; 3] = ["pdf", "json", "txt"];
 
 /// Grava um arquivo no caminho que o usuário escolheu na janela "Salvar como".
 /// Só aceita caminho absoluto e as extensões do app; nada é enviado para fora.
@@ -16,7 +16,7 @@ pub fn save_file(path: String, contents: Vec<u8>) -> Result<(), String> {
         .and_then(|e| e.to_str())
         .map(|e| e.to_ascii_lowercase());
     if !ext.is_some_and(|e| ALLOWED.contains(&e.as_str())) {
-        return Err("Só é possível salvar arquivos .pdf ou .json.".into());
+        return Err("Só é possível salvar arquivos .pdf, .json ou .txt.".into());
     }
     std::fs::write(target, contents).map_err(|e| format!("Não foi possível salvar: {e}"))
 }
