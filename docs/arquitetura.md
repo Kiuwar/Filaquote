@@ -4,11 +4,19 @@
 
 - **Tauri 2** (Rust) cuida da janela, do arquivo SQLite e, nas próximas fases, do acesso a arquivos.
 - **React + TypeScript + Tailwind 4** desenham a interface (`apps/desktop/src`).
-- **Motor de preço** em pacote TypeScript puro e testado, separado da interface (`packages/engine`, fase 3).
+- **Motor de preço** em pacote TypeScript puro e testado, separado da interface (`packages/engine`).
 - **Dados locais** em SQLite via `tauri-plugin-sql`, com migrations versionadas em
   `apps/desktop/src-tauri/migrations`. O banco (`filaquote.db`) fica na pasta de configuração
   do app do usuário do sistema operacional; cada conta do Windows tem os próprios dados.
 - Nenhum dado sai da máquina sem ação do usuário. Sem telemetria e sem chamadas de rede.
+- **Gravações atômicas**: o tauri-plugin-sql usa um pool de conexões, então `BEGIN`/`COMMIT`
+  enviados separadamente poderiam cair em conexões diferentes. Operações de várias instruções
+  (salvar orçamento, importar backup, excluir cliente) usam o comando Rust `sql_batch`, que roda
+  tudo numa transação na mesma conexão do pool do plugin.
+- **Migrations** só acrescentam (tabelas e colunas novas) e nunca são editadas depois de
+  publicadas. O teste `migrations.test.ts` grava dados típicos de cada versão e confere que
+  continuam iguais depois de aplicar todas as seguintes; ele também confere que cada arquivo
+  está registrado no Rust.
 
 ## Janela com cantos arredondados
 
@@ -58,9 +66,9 @@ clarão branco. Se a interface falhar, o Rust mostra a janela após 4 s.
 1. Plano e perguntas ✔
 2. Base do app, tema e componentes ✔
 3. Motor de preço com testes e perfis de cálculo salvos ✔
-4. Tela de orçamento e comparador de métodos
-5. PDF e histórico
-6. Backup, instalador e CI com Releases
+4. Tela de orçamento e comparador de métodos ✔
+5. PDF e histórico ✔
+6. Backup, instalador e CI com Releases ✔ (v0.1.0)
 
-Funções escolhidas (1, 2, 4 e 6) entram junto da fase que dá base a cada uma: o cálculo já
-no motor; a migration e a tela quando existirem as tabelas de orçamento (fases 4 e 5).
+Funções escolhidas (1, 2, 4 e 6): cálculo no motor; migrations 0004 (peças recorrentes) e
+0005 (fechamentos); telas no orçamento, no histórico e no perfil.
