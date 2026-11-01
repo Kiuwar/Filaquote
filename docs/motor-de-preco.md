@@ -96,3 +96,27 @@ que aconteceu de fato. Tudo opcional, exceto o que mudou:
 o lucro orçado e o real, o desvio, o custo de reimpressões e as horas de máquina.
 
 Esses fechamentos também alimentam a calibração (função 2).
+
+## Função 2: calibração pelo histórico (`calibration.ts`)
+
+**Problema:** o tempo do fatiador, o desperdício, a taxa de falha e o tempo de pós-processamento
+são chutes que se repetem em todos os orçamentos.
+
+**Entrada:** os pedidos fechados (função 1), convertidos com `sampleFromClosure`. Impressões
+atípicas (pausa, troca de bico, teste) podem ser marcadas como excluídas.
+
+**Sugestões** (`suggestCalibration`):
+
+| Campo do perfil            | Conta                                                                                                                        |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Fator de tempo             | mediana de (tempo real ÷ tempo do fatiador)                                                                                  |
+| Fator de pós-processamento | mediana de (minutos reais ÷ estimados)                                                                                       |
+| Desperdício (%)            | mediana de (peso pesado ÷ peso do fatiador − 1); se der negativo, 0% com aviso de que o fatiador superestima                 |
+| Taxa de falha (%)          | soma do custo de produção perdido em reimpressões ÷ soma do custo de produção entregue, contando também os pedidos sem falha |
+
+- **Mediana**, não média: uma impressão fora da curva não puxa a sugestão.
+- Só sugere com **pelo menos 5 amostras**; antes disso, mostra quantas faltam.
+- Marca como "vale aplicar" só mudanças de pelo menos 2% nos fatores ou 1 ponto percentual nos
+  percentuais (configurável).
+- **Nunca aplica sozinho.** `applyCalibration` aplica só os campos que o usuário aceitou e devolve
+  um perfil novo.

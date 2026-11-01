@@ -44,7 +44,9 @@ motor; depois a migration e a tela, quando existir a base de orçamentos que ela
   ([como funciona](docs/motor-de-preco.md#função-1-fechamento-do-pedido-estimado--real-closurets)).
   A seguir: migration e tela de fechamento junto do histórico de orçamentos (fase 5).
 
-- **2. Calibração pelo histórico:** planejada.
+- **2. Calibração pelo histórico:** cálculo pronto no motor
+  ([como funciona](docs/motor-de-preco.md#função-2-calibração-pelo-histórico-calibrationts)).
+  A seguir: tela de sugestões no perfil de cálculo, depois do fechamento (fase 5).
 
 - **4. Peças recorrentes com preço sempre atual:** planejada.
 
