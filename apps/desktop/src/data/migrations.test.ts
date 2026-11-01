@@ -18,6 +18,10 @@ const SEED: Record<number, string[]> = {
     `INSERT INTO parts (id, name, input) VALUES ('pt1', 'Suporte', '{}')`,
     `UPDATE quote_items SET part_id = 'pt1' WHERE id = 'i1'`,
   ],
+  5: [
+    `INSERT INTO closures (item_id, closed_on, actual, revenue, fees)
+     VALUES ('i1', '2026-11-01', '{"printHours":4.5}', 76.5, 3)`,
+  ],
 };
 
 /** O que precisa continuar igual depois de todas as migrations seguintes. */
@@ -36,6 +40,20 @@ const EXPECT: Record<number, Array<[string, unknown[]]>> = {
     ],
   ],
   4: [["SELECT part_id FROM quote_items", [{ part_id: "pt1" }]]],
+  5: [
+    [
+      "SELECT item_id, closed_on, actual, revenue, fees FROM closures",
+      [
+        {
+          item_id: "i1",
+          closed_on: "2026-11-01",
+          actual: '{"printHours":4.5}',
+          revenue: 76.5,
+          fees: 3,
+        },
+      ],
+    ],
+  ],
 };
 
 describe("migrations", () => {

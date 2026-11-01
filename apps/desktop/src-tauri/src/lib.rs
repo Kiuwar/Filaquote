@@ -1,3 +1,4 @@
+mod files;
 mod window;
 
 use tauri_plugin_sql::{Migration, MigrationKind};
@@ -34,12 +35,20 @@ fn migrations() -> Vec<Migration> {
             sql: include_str!("../migrations/0004_pecas_recorrentes.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 5,
+            description: "fechamentos",
+            sql: include_str!("../migrations/0005_fechamentos.sql"),
+            kind: MigrationKind::Up,
+        },
     ]
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![files::save_file])
         .plugin(
             tauri_plugin_sql::Builder::default()
                 .add_migrations(DB_URL, migrations())
