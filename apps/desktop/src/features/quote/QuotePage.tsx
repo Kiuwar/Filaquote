@@ -359,6 +359,9 @@ function Editor({
           code={code}
           defaults={defaults}
           onStatusChanged={(status) => setQ({ status })}
+          flush={async () => {
+            if (!readOnly) await saveQuote(db, quote, items);
+          }}
         />
       </Card>
 
