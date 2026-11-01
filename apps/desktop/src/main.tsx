@@ -3,12 +3,11 @@ import "./styles/index.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
-import {
-  createMemoryStore,
-  openSettingsStore,
-  readJson,
-  type KeyValueStore,
-} from "./platform/storage";
+import { DataProvider } from "./data/DataProvider";
+import type { Db } from "./data/db";
+import { createDbKeyValueStore } from "./data/kv";
+import { openDb } from "./data/openDb";
+import { createMemoryStore, readJson, type KeyValueStore } from "./platform/storage";
 import { getFrameMode, windowControls } from "./platform/tauri";
 import { APPEARANCE_KEY, AppearanceProvider } from "./settings/appearance";
 import { applyTheme, resolveMode, sanitizeAppearance } from "./theme/theme";
@@ -17,10 +16,12 @@ async function bootstrap() {
   const root = document.documentElement;
   root.dataset.frame = getFrameMode();
 
+  let db: Db | null = null;
   let store: KeyValueStore;
   let storageError: string | undefined;
   try {
-    store = await openSettingsStore();
+    db = await openDb();
+    store = createDbKeyValueStore(db);
   } catch (err) {
     console.error("Falha ao abrir o banco local", err);
     storageError = err instanceof Error ? err.message : String(err);
@@ -35,7 +36,9 @@ async function bootstrap() {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <AppearanceProvider store={store} initial={initial}>
-        <App storageError={storageError} />
+        <DataProvider db={db}>
+          <App storageError={storageError} />
+        </DataProvider>
       </AppearanceProvider>
     </StrictMode>,
   );

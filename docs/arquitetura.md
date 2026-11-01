@@ -57,7 +57,7 @@ clarão branco. Se a interface falhar, o Rust mostra a janela após 4 s.
 
 1. Plano e perguntas ✔
 2. Base do app, tema e componentes ✔
-3. Motor de preço com testes e perfis de cálculo salvos ← atual (motor de custo pronto)
+3. Motor de preço com testes e perfis de cálculo salvos ✔
 4. Tela de orçamento e comparador de métodos
 5. PDF e histórico
 6. Backup, instalador e CI com Releases

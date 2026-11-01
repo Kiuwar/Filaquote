@@ -3,7 +3,7 @@
 App de desktop para makers de impressão 3D orçarem peças e exportarem o orçamento em PDF.
 Windows primeiro; Mac depois. Tudo fica no computador: sem conta, sem servidor, sem telemetria.
 
-> Status: **fase 3 em andamento** (motor de custo pronto; leitura de arquivos e perfis de cálculo a seguir).
+> Status: **fase 3** pronta (motor de preço, leitura de STL e 3MF, perfis de cálculo).
 > Veja o [plano por fases](docs/arquitetura.md#fases).
 
 ## Desenvolvimento
